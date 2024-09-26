@@ -1,119 +1,65 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>WebSocket Chat</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-
-            .chat-container {
-                width: 400px;
-                background-color: white;
-                padding: 20px;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }
-
-            .chat-box {
-                height: 300px;
-                border: 1px solid #ccc;
-                padding: 10px;
-                margin-bottom: 10px;
-                overflow-y: scroll;
-                background-color: #f9f9f9;
-            }
-
-            .message {
-                margin: 5px 0;
-            }
-
-            .user-message {
-                color: blue;
-            }
-
-            .server-message {
-                color: green;
-            }
-
-            .message-input {
-                width: 100%;
-                padding: 10px;
-                box-sizing: border-box;
-                border-radius: 5px;
-                border: 1px solid #ccc;
-            }
-
-            .send-button {
-                padding: 10px 20px;
-                background-color: blue;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                margin-top: 10px;
-                width: 100%;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="chat-container">
-            <div class="chat-box" id="chat-box">
-                <!-- Tin nhắn sẽ hiển thị tại đây -->
-            </div>
-            <input id="message-input" class="message-input" type="text" placeholder="Nhập tin nhắn..." />
-            <button class="send-button" onclick="sendMessage()">Gửi</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat</title>
+    <style>
+        /* Styles của bạn không thay đổi */
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <!-- Tin nhắn sẽ hiển thị tại đây -->
         </div>
+        <input id="message-input" tabindex="1" class="message-input" type="text" placeholder="Nhập tin nhắn..." />
+        <button class="send-button" tabindex="2" onclick="sendMessage()">Gửi</button>
+    </div>
 
-        <script>
-            const ws = new WebSocket('ws://literate-sniffle-v6vq6q994499hx769-6789.app.github.dev:5554');
-            const chatBox = document.getElementById('chat-box');
-            const messageInput = document.getElementById('message-input');
+    <script>
+        // Thay đổi URL này thành URL WebSocket Replit chính xác
+        const ws = new WebSocket('wss://literate-sniffle-v6vq6q994499hx769-6789.app.github.dev:5554');
 
-            // Xử lý khi nhận tin nhắn từ server
-            ws.onmessage = function(event) {
-                const message = document.createElement('div');
-                message.classList.add('message');
-                message.classList.add('server-message');
-                message.textContent = `Người khác: ${event.data}`;
-                chatBox.appendChild(message);
-                chatBox.scrollTop = chatBox.scrollHeight; // Tự động cuộn xuống cuối
-            };
-            // Gửi tin nhắn từ client tới server
-            function sendMessage() {
-                const message = messageInput.value;
-                if (message.trim() !== '') {
-                    // Hiển thị tin nhắn của mình trên giao diện
-                    const myMessage = document.createElement('div');
-                    myMessage.classList.add('message');
-                    myMessage.classList.add('user-message');
-                    myMessage.textContent = `Bạn: ${message}`;
-                    chatBox.appendChild(myMessage);
-                    chatBox.scrollTop = chatBox.scrollHeight;
+        const chatBox = document.getElementById('chat-box');
+        const messageInput = document.getElementById('message-input');
 
-                    // Gửi tin nhắn tới server
-                    ws.send(message);
-                    messageInput.value = '';  // Xóa nội dung sau khi gửi
-                }
-            }
+        // Xử lý khi nhận tin nhắn từ server
+        ws.onmessage = function(event) {
+            const message = document.createElement('div');
+            message.classList.add('message');
+            message.classList.add('server-message');
+            message.textContent = `Người khác: ${event.data}`;
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight; // Tự động cuộn xuống cuối
+        };
 
-            // Xử lý khi kết nối WebSocket bị đóng
-            ws.onclose = function() {
-                const message = document.createElement('div');
-                message.classList.add('message');
-                message.textContent = "Kết nối bị đóng.";
-                chatBox.appendChild(message);
+        // Gửi tin nhắn từ client tới server
+        function sendMessage() {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                // Hiển thị tin nhắn của mình trên giao diện
+                const myMessage = document.createElement('div');
+                myMessage.classList.add('message');
+                myMessage.classList.add('user-message');
+                myMessage.textContent = `Bạn: ${message}`;
+                chatBox.appendChild(myMessage);
                 chatBox.scrollTop = chatBox.scrollHeight;
-            };
-        </script>
-    </body>
-    </html>
+
+                // Gửi tin nhắn tới server
+                ws.send(message);
+                messageInput.value = '';  // Xóa nội dung sau khi gửi
+            }
+        }
+
+        // Xử lý khi kết nối WebSocket bị đóng
+        ws.onclose = function() {
+            const message = document.createElement('div');
+            message.classList.add('message');
+            message.textContent = "Kết nối bị đóng.";
+            chatBox.appendChild(message);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+    </script>
+</body>
+</html>
